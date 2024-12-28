@@ -7,7 +7,7 @@ const StarRating = ({ driverId }) => {
   // Fetch driver ratings from the API
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/v1/ride/driver-ratings/${driverId}`)
+      .get(`http://localhost:7248/api/v1/author-ratings/${driverId}`)
       .then((response) => {
         const fetchedRating = response.data.message[0].rating; // Assuming the API returns the rating value in this structure
         setRating(fetchedRating);

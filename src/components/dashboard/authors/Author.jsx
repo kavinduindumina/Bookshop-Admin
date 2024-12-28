@@ -24,36 +24,11 @@ const Author = () => {
       { label: "Author Name", field: "authorName" },
       { label: "Email", field: "authorEmail" },
       { label: "Phone", field: "authorPhone" },
-      { label: "Address", field: "authorStatus" },
+      { label: "Address", field: "authorAddress" },
       { label: "Books", field: "authorCreatedAt" },
       { label: "Actions", field: "actions", sort: "disabled", width: 100 },
     ],
-    rows: [{
-      id: 1,
-      authorName: "Akalanka Nagahawaththa",
-      authorEmail: "akalanka@gmail.com",
-      authorPhone: "0712345678",
-      authorStatus: "No. 123, Galle Road, Colombo 01",
-      authorCreatedAt: "2020-01-01",
-      actions: (
-        <MDBDropdown>
-          <MDBDropdownToggle caret style={{ backgroundColor: 'transparent', border: 'none', color: '#000' }} className="btn btn-sm btn-secondary">
-            <i className="fas fa-ellipsis-v"></i>
-          </MDBDropdownToggle>
-          <MDBDropdownMenu basic>
-            <MDBDropdownItem>
-              <i className="fas fa-edit"></i> Edit
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-              <i className="fas fa-trash"></i> Delete
-            </MDBDropdownItem>
-            <MDBDropdownItem>
-              <i className="fas fa-eye"></i> View
-            </MDBDropdownItem>
-          </MDBDropdownMenu>
-        </MDBDropdown>
-      ),
-    }],
+    rows: [],
   });
 
   const [modal, setModal] = useState(false);
@@ -65,15 +40,18 @@ const Author = () => {
 
   // Fetch authors data
   useEffect(() => {
+    setIsLoading(false);
     axios
-      .get("http://localhost:3000/api/v1/author/all-authors")
+      .get("https://localhost:7248/api/Author")
       .then((response) => {
-        const data = response.data.message;
+        
+        const data = response.data.$values;
         const rows = data.map((row, index) => ({
           id: index + 1,
-          authorName: row.fullName,
+          authorName: row.name,
           authorEmail: row.email,
-          authorPhone: row.phone,
+          authorPhone: row.mobileNumber,
+          authorAddress: row.address,
           authorStatus: (
             <span
               className={`badge badge-${
@@ -155,18 +133,18 @@ const Author = () => {
           {selectedAuthor && (
             <>
               <p><strong>Author Ratings:</strong> {selectedAuthor.id ? <StarRating authorId={selectedAuthor.id} /> : "Not available"}</p>
-              <p><strong>Name:</strong> {selectedAuthor.fullName}</p>
-              <p><strong>NIC:</strong> {selectedAuthor.nic}</p>
+              <p><strong>Name:</strong> {selectedAuthor.name}</p>
               <p><strong>Email:</strong> {selectedAuthor.email}</p>
-              <p><strong>Phone:</strong> {selectedAuthor.phone}</p>
-              <p><strong>Status:</strong> <span
+              <p><strong>Phone:</strong> {selectedAuthor.mobileNumber}</p>
+              <p><strong>Address:</strong> {selectedAuthor.address}</p>
+              {/* <p><strong>Status:</strong> <span
               className={`badge badge-${
                 selectedAuthor.status === "active" ? "success" : "danger"
               }`}
             >
               {selectedAuthor.status}
-            </span></p>
-              <p><strong>Created At:</strong> {new Date(selectedAuthor.createdAt).toLocaleString()}</p>
+            </span></p> */}
+              <p><strong>Created At:</strong> {new Date(selectedAuthor.createAt).toLocaleString()}</p>
             </>
           )}
         </MDBModalBody>

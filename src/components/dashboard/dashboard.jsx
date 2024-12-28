@@ -116,7 +116,7 @@ const Dashboard = () => {
                 <Link className="collapse-item" to="/dashboard/customers">
                   All Customers
                 </Link>
-                <Link className="collapse-item" to="/dashboard/passengers/add">
+                <Link className="collapse-item" to="/dashboard/customers/add">
                   Add Customer
                 </Link>
               </div>
@@ -143,10 +143,10 @@ const Dashboard = () => {
             >
               <div className="bg-white py-2 collapse-inner rounded">
                 <h6 className="collapse-header">Components</h6>
-                <Link className="collapse-item" to="/dashboard/drivers">
+                <Link className="collapse-item" to="/dashboard/authors">
                   All Authors
                 </Link>
-                <Link className="collapse-item" to="/dashboard/drivers/add">
+                <Link className="collapse-item" to="/dashboard/authors/add">
                   Add Author
                 </Link>
               </div>
@@ -173,10 +173,10 @@ const Dashboard = () => {
             >
               <div className="bg-white py-2 collapse-inner rounded">
                 <h6 className="collapse-header">Components</h6>
-                <Link className="collapse-item" to="/dashboard/vehicles">
+                <Link className="collapse-item" to="/dashboard/categories">
                   All Categories
                 </Link>
-                <Link className="collapse-item" to="/dashboard/vehicles/add">
+                <Link className="collapse-item" to="/dashboard/categories/add">
                   Add Category
                 </Link>
               </div>
@@ -203,10 +203,10 @@ const Dashboard = () => {
             >
               <div className="bg-white py-2 collapse-inner rounded">
                 <h6 className="collapse-header">Components</h6>
-                <Link className="collapse-item" to="/dashboard/phoneOperators">
+                <Link className="collapse-item" to="/dashboard/books">
                   All Books
                 </Link>
-                <Link className="collapse-item" to="/dashboard/phoneOperators/add">
+                <Link className="collapse-item" to="/dashboard/books/add">
                   Add Book
                 </Link>
               </div>

@@ -8,7 +8,6 @@ const AddAuthor = () => {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [date, setDate] = useState("");
-  const [nic, setNationalID] = useState("");
   const [phone, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [isloading, setLoading] = useState(false);
@@ -18,17 +17,12 @@ const AddAuthor = () => {
     e.preventDefault();
     setLoading(true);
 
-    if (!email || !fullName || !nic || !phone || !address) {
+    if (!email || !fullName || !phone || !address) {
       toast.error("This email is already in use 😒");
       setLoading(false);
       return;
     }
 
-    if(nic.length !== 10){
-      toast.error("National ID should be 10 characters or more");
-      setLoading(false);
-      return;
-    }
 
     if(phone.length !== 10){
       toast.error("Phone number should be 10 characters");
@@ -37,10 +31,9 @@ const AddAuthor = () => {
     }
 
     await axios
-      .post("http://localhost:3000/api/v1/admin/add-author", {
+      .post("https://localhost:7248/api/Author", {
         email,
         fullName,
-        nic,
         phone,
         address,
       })
@@ -48,7 +41,6 @@ const AddAuthor = () => {
         toast.success("Author added successfully");
         setEmail("");
         setFullName("");
-        setNationalID("");
         setPhoneNumber("");
         setAddress("");
       })
@@ -60,7 +52,7 @@ const AddAuthor = () => {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:3000/api/v1/author/get-all-usernames")
+    axios.get("https://localhost:7248/api/Author")
     .then((res) => {
       setAllUsernames(res.data.message);
     })
@@ -70,13 +62,12 @@ const AddAuthor = () => {
 
     if (id) {
       axios
-        .get(`http://localhost:3000/api/v1/author/profile/${id}`)
+        .get(`https://localhost:7248/api/Author/${id}`)
         .then((res) => {
           const data = res.data.message;
           setEmail(data.email);
           setFullName(data.fullName);
           setDate(data.updatedAt);
-          setNationalID(data.nic);
           setPhoneNumber(data.phone);
           setAddress(data.address);
         })
@@ -89,10 +80,9 @@ const AddAuthor = () => {
   const onEdit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await axios.put(`http://localhost:3000/api/v1/author/update-profile/${id}`, {
+    await axios.put(`https://localhost:7248/api/Author/${id}`, {
       email,
       fullName,
-      nic,
       phone,
       address,
     })
@@ -131,9 +121,8 @@ const AddAuthor = () => {
                     type="text"
                     id="form6Example6"
                     className="form-control"
-                    value="akalanka@gmail.com"
-                    // value={email}
-                    // onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
@@ -146,9 +135,8 @@ const AddAuthor = () => {
                     type="text"
                     id="form6Example7"
                     className="form-control"
-                    value="Akalanka Nagahawaththa"
-                    // value={fullName}
-                    // onChange={(e) => setFullName(e.target.value)}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                   />
                 </div>
               </div>
@@ -177,9 +165,8 @@ const AddAuthor = () => {
                     type="text"
                     id="form6Example7"
                     className="form-control"
-                    value="No. 123, Galle Road, Colombo 01"
-                    // value={phone}
-                    // onChange={(e) => setPhoneNumber(e.target.value)}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
                   />
                 </div>
               </div>
@@ -194,9 +181,8 @@ const AddAuthor = () => {
                     type="text"
                     id="form6Example7"
                     className="form-control"
-                    value="0712345678"
-                    // value={address}
-                    // onChange={(e) => setAddress(e.target.value)}
+                    value={phone}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </div>
               </div>
@@ -209,8 +195,7 @@ const AddAuthor = () => {
                     type="text"
                     id="form6Example7"
                     className="form-control"
-                    value="2024-11-28 21:50:12"
-                    // value={date ? new Date(date).toLocaleString() : ""}
+                    value={date ? new Date(date).toLocaleString() : ""}
                     disabled={true}
                   />
                 </div>

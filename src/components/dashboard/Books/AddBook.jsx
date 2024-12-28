@@ -2,99 +2,98 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from "axios";
+import ImageUploader from "../../utils/ImageUploader"; // Assuming the drag-and-drop utility is here
 
 const AddBook = () => {
   const { id } = useParams();
   const [isbn, setIsbn] = useState("");
   const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [categoryID, setCategoryID] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [authorId, setAuthorId] = useState("");
+  const [authors, setAuthors] = useState([]);
   const [language, setLanguage] = useState("");
   const [price, setPrice] = useState("");
   const [qty, setQty] = useState("");
-  const [date, setDate] = useState("");
+  const [image, setImage] = useState(null);
   const [isloading, setLoading] = useState(false);
+
+  const fetchDropdownData = async () => {
+    try {
+      const categoryRes = await axios.get("https://localhost:7248/api/Category");
+      //setCategories(categoryRes.data);
+      const authorRes = await axios.get("https://localhost:7248/api/Author");
+      //setAuthors(authorRes.data);
+    } catch (error) {
+      console.error("Error fetching dropdown data", error);
+    }
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!isbn || !title || !author || !category || !language || !price || !qty) {
+    if (!title || !description || !categoryID || !authorId || !language || !price || !qty || !image) {
       toast.error("All fields are required.");
       setLoading(false);
       return;
     }
 
-    await axios
-      .post("http://localhost:3000/api/v1/admin/add-book", {
-        isbn,
-        title,
-        author,
-        category,
-        language,
-        price,
-        qty,
-      })
-      .then((res) => {
-        toast.success("Book added successfully");
-        setIsbn("");
-        setTitle("");
-        setAuthor("");
-        setCategory("");
-        setLanguage("");
-        setPrice("");
-        setQty("");
-      })
-      .catch((err) => {
-        toast.error("Failed to add book");
-        console.log(err);
+    const formData = new FormData();
+    formData.append("isbn", isbn);
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("categoryID", categoryID);
+    formData.append("authorId", authorId);
+    formData.append("language", language);
+    formData.append("price", price);
+    formData.append("qty", qty);
+    formData.append("image", image);
+
+    try {
+      const response = await axios.post("hhttps://localhost:7248/api/Book", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
+      toast.success("Book added successfully");
+      setIsbn("");
+      setTitle("");
+      setDescription("");
+      setCategoryID("");
+      setAuthorId("");
+      setLanguage("");
+      setPrice("");
+      setQty("");
+      setImage(null);
+    } catch (error) {
+      toast.error("Failed to add book");
+      console.error(error);
+    }
     setLoading(false);
   };
 
   useEffect(() => {
+    fetchDropdownData();
     if (id) {
       axios
-        .get(`http://localhost:3000/api/v1/book/profile/${id}`)
+        .get(`https://localhost:7248/api/Book/${id}`)
         .then((res) => {
           const data = res.data.message;
           setIsbn(data.isbn);
           setTitle(data.title);
-          setAuthor(data.author.name);
-          setCategory(data.category.name);
+          setDescription(data.description);
+          setCategoryID(data.categoryID);
+          setAuthorId(data.authorId);
           setLanguage(data.language);
           setPrice(data.price);
           setQty(data.qty);
-          setDate(data.updatedAt);
+          setImage(data.image);
         })
         .catch((err) => {
           console.log(err);
         });
     }
   }, [id]);
-
-  const onEdit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    await axios.put(`http://localhost:3000/api/v1/book/update-profile/${id}`, {
-      isbn,
-      title,
-      author,
-      category,
-      language,
-      price,
-      qty,
-    })
-    .then((res) => {
-      toast.success("Book updated successfully");
-    })
-    .catch((err) => {
-      toast.error("Failed to update book");
-      console.log(err);
-    });
-
-    setLoading(false);
-  };
 
   return (
     <div className="card shadow" style={{ marginBottom: "250px" }}>
@@ -108,157 +107,106 @@ const AddBook = () => {
         <div>{""}</div>
       </div>
       <div className="card-body">
-        <div>
-          <form>
-            <div className="row mb-4">
-              <div className="col">
-                <div data-mdb-input-init className="form-outline">
-                  <label className="form-label" htmlFor="isbn">
-                    ISBN
-                  </label>
-                  <input
-                    type="text"
-                    id="isbn"
-                    className="form-control"
-                    value={isbn}
-                    onChange={(e) => setIsbn(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="col">
-                <div data-mdb-input-init className="form-outline">
-                  <label className="form-label" htmlFor="title">
-                    Book Title
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    className="form-control"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="row mb-4">
-              <div className="col">
-                <div data-mdb-input-init className="form-outline">
-                  <label className="form-label" htmlFor="author">
-                    Author
-                  </label>
-                  <input
-                    type="text"
-                    id="author"
-                    className="form-control"
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="col">
-                <div data-mdb-input-init className="form-outline">
-                  <label className="form-label" htmlFor="category">
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    id="category"
-                    className="form-control"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="row mb-4">
-              <div className="col">
-                <div data-mdb-input-init className="form-outline">
-                  <label className="form-label" htmlFor="language">
-                    Language
-                  </label>
-                  <input
-                    type="text"
-                    id="language"
-                    className="form-control"
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="col">
-                <div data-mdb-input-init className="form-outline">
-                  <label className="form-label" htmlFor="price">
-                    Price
-                  </label>
-                  <input
-                    type="text"
-                    id="price"
-                    className="form-control"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="row mb-4">
-              <div className="col">
-                <div data-mdb-input-init className="form-outline">
-                  <label className="form-label" htmlFor="qty">
-                    Quantity
-                  </label>
-                  <input
-                    type="text"
-                    id="qty"
-                    className="form-control"
-                    value={qty}
-                    onChange={(e) => setQty(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="col">
-                <div data-mdb-input-init className="form-outline">
-                  <label className="form-label" htmlFor="date">
-                    Last Updated At
-                  </label>
-                  <input
-                    type="text"
-                    id="date"
-                    className="form-control"
-                    value={date ? new Date(date).toLocaleString() : ""}
-                    disabled={true}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <button
-              data-mdb-ripple-init
-              type="button"
-              className={
-                isloading
-                  ? "btn btn-primary btn-block disabled"
-                  : "btn btn-primary btn-block"
-              }
-              onClick={
-                id
-                  ? (e) => {
-                      onEdit(e);
-                    }
-                  : (e) => {
-                      onSubmit(e);
-                    }
-              }
+        <form onSubmit={onSubmit}>
+          <div className="mb-4">
+            <label className="form-label" htmlFor="title">Book Title</label>
+            <input
+              type="text"
+              id="title"
+              className="form-control"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="form-label" htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              className="form-control"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="form-label" htmlFor="category">Category</label>
+            <select
+              id="category"
+              className="form-control"
+              value={categoryID}
+              onChange={(e) => setCategoryID(e.target.value)}
             >
-              {isloading ? (
-                <div className="spinner-border spinner-border-sm" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-              ) : (
-                "Add New Book"
-              )}
-            </button>
-          </form>
-        </div>
+              <option value="">Select Category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="form-label" htmlFor="author">Author</label>
+            <select
+              id="author"
+              className="form-control"
+              value={authorId}
+              onChange={(e) => setAuthorId(e.target.value)}
+            >
+              <option value="">Select Author</option>
+              {authors.map((author) => (
+                <option key={author.id} value={author.id}>
+                  {author.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="form-label" htmlFor="language">Language</label>
+            <input
+              type="text"
+              id="language"
+              className="form-control"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="form-label" htmlFor="price">Price</label>
+            <input
+              type="number"
+              id="price"
+              className="form-control"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="form-label" htmlFor="qty">Quantity</label>
+            <input
+              type="number"
+              id="qty"
+              className="form-control"
+              value={qty}
+              onChange={(e) => setQty(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="form-label" htmlFor="image">Book Image</label>
+            <ImageUploader setImage={setImage} />
+          </div>
+          <button
+            type="submit"
+            className={isloading ? "btn btn-primary disabled" : "btn btn-primary"}
+            disabled={isloading}
+          >
+            {isloading ? (
+              <div className="spinner-border spinner-border-sm" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            ) : (
+              id ? "Update Book" : "Add New Book"
+            )}
+          </button>
+        </form>
       </div>
     </div>
   );

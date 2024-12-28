@@ -22,7 +22,7 @@ const Category = () => {
       { label: "ID", field: "id" },
       { label: "Category Name", field: "categoryName" },
       { label: "Description", field: "description" },
-      { label: "Category Status", field: "categoryStatus" },
+      //{ label: "Category Status", field: "categoryStatus" },
       { label: "Category Created At", field: "categoryCreatedAt" },
       { label: "Actions", field: "actions", sort: "disabled", width: 100 },
     ],
@@ -34,26 +34,27 @@ const Category = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
-    setIsloading(true);
+    setIsloading(false);
     axios
-      .get("http://localhost:3000/api/v1/category/all-categories")
+      .get("https://localhost:7248/api/Category")
       .then((response) => {
-        const data = response.data.message;
-        console.log(data);
-        const rows = data.map((row, index) => ({
-          id: index + 1,
-          categoryName: row.categoryName,
+        console.log(response.data.$values);
+        const data = response.data.$values;
+        const rows = data.map((row) => {
+          return {
+          id: row.id,
+          categoryName: row.name,
           description: row.description,
-          categoryStatus: (
-            <span
-              className={`badge badge-${
-                row.status === "approved" ? "success" : "danger"
-              }`}
-            >
-              {row.status}
-            </span>
-          ),
-          categoryCreatedAt: new Date(row.createdAt).toLocaleString(),
+          // categoryStatus: (
+          //   <span
+          //     className={`badge badge-${
+          //       row.status === "approved" ? "success" : "danger"
+          //     }`}
+          //   >
+          //     {row.status}
+          //   </span>
+          // ),
+          categoryCreatedAt: new Date(row.createAt).toLocaleString(),
           actions: (
             <MDBDropdown>
               <MDBDropdownToggle
@@ -91,7 +92,8 @@ const Category = () => {
               </MDBDropdownMenu>
             </MDBDropdown>
           ),
-        }));
+        };
+        });
         setDatatable((prevState) => ({ ...prevState, rows }));
         setIsloading(false);
       })
@@ -103,7 +105,7 @@ const Category = () => {
 
   const handleViewClick = (rowId) => {
     axios
-      .post(`http://localhost:3000/api/v1/category/get-category/${rowId}`)
+      .post(`https://localhost:7248/api/Category/${rowId}`)
       .then((response) => {
         setSelectedCategory(response.data.message);
         setModal(true); // Open modal
@@ -127,7 +129,7 @@ const Category = () => {
       if (result.isConfirmed) {
         axios
           .put(
-            `http://localhost:3000/api/v1/category/update-category-status/${rowId}`
+            `https://localhost:7248/api/Category/${rowId}`
           )
           .then(() => {
             toast.success("Category approved successfully");
@@ -154,7 +156,7 @@ const Category = () => {
       if (result.isConfirmed) {
         axios
           .put(
-            `http://localhost:3000/api/v1/category/delete-category/${rowId}`
+            `https://localhost:7248/api/Category/${rowId}`
           )
           .then(() => {
             toast.success("Category deleted successfully");
@@ -211,7 +213,7 @@ const Category = () => {
             <p>
               <strong>Description:</strong> {selectedCategory.description}
             </p>
-            <p>
+            {/* <p>
               <strong>Status:</strong>
               <span
                 className={`badge badge-${
@@ -220,10 +222,10 @@ const Category = () => {
               >
                 {selectedCategory.status}
               </span>
-            </p>
+            </p> */}
             <p>
               <strong>Created At:</strong>{" "}
-              {new Date(selectedCategory.createdAt).toLocaleString()}
+              {new Date(selectedCategory.createAt).toLocaleString()}
             </p>
           </MDBModalBody>
 
