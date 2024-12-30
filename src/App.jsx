@@ -5,28 +5,41 @@ import Loader from "./components/utils/Loader";
 const Login = lazy(() => import("./components/auth/login"));
 const Register = lazy(() => import("./components/auth/register"));
 
-const DashboardDetails = lazy(() => import("./components/dashboard/dashboardDetails"));
+const DashboardDetails = lazy(() =>
+  import("./components/dashboard/dashboardDetails")
+);
 const Dashboard = lazy(() => import("./components/dashboard/dashboard"));
 
 const Orders = lazy(() => import("./components/dashboard/orders/Order"));
 
 const Authors = lazy(() => import("./components/dashboard/authors/Author"));
-const AddAuthors = lazy(() => import("./components/dashboard/authors/AddAuthor"));
+const AddAuthors = lazy(() =>
+  import("./components/dashboard/authors/AddAuthor")
+);
 
-const Customer = lazy(() => import("./components/dashboard/customers/Customer"));
-const AddCustomer = lazy(() => import("./components/dashboard/customers/AddCustomer"));
+const Customer = lazy(() =>
+  import("./components/dashboard/customers/Customer")
+);
+const AddCustomer = lazy(() =>
+  import("./components/dashboard/customers/AddCustomer")
+);
 
 const Books = lazy(() => import("./components/dashboard/Books/Book"));
 const AddBooks = lazy(() => import("./components/dashboard/Books/AddBook"));
 
-const Analytics = lazy(() => import("./components/dashboard/reports/Analytics"));
+const Analytics = lazy(() =>
+  import("./components/dashboard/reports/Analytics")
+);
 const Reports = lazy(() => import("./components/dashboard/reports/Reports"));
 
 const Settings = lazy(() => import("./components/dashboard/settings/Settings"));
 
-
-const Categories = lazy(() => import("./components/dashboard/category/Category"));
-const AddCategories = lazy(() => import("./components/dashboard/category/AddCategory"));
+const Categories = lazy(() =>
+  import("./components/dashboard/category/Category")
+);
+const AddCategories = lazy(() =>
+  import("./components/dashboard/category/AddCategory")
+);
 
 import PropTypes from "prop-types";
 
@@ -35,7 +48,7 @@ function ProtectedRoute({ children }) {
     children: PropTypes.node.isRequired,
   };
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!token) {
@@ -55,7 +68,7 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token && location.pathname === "/") {
       navigate("/dashboard");
     }
@@ -69,16 +82,16 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            //<ProtectedRoute>
+            <ProtectedRoute>
               <Dashboard />
-            //</ProtectedRoute>
+            </ProtectedRoute>
           }
         >
           <Route index element={<DashboardDetails />} />
           <Route path="customers" element={<Customer />} />
           <Route path="customers/add" element={<AddCustomer />} />
           <Route path="customers/edit/:id" element={<AddCustomer />} />
-          
+
           <Route path="authors" element={<Authors />} />
           <Route path="authors/add" element={<AddAuthors />} />
 

@@ -12,7 +12,7 @@ import {
   MDBModalBody,
   MDBModalHeader,
   MDBModalFooter,
-  MDBBtn
+  MDBBtn,
 } from "mdbreact";
 
 const Order = () => {
@@ -20,29 +20,16 @@ const Order = () => {
     columns: [
       { label: "Order ID", field: "id" },
       {
-        label: "Product Image",
-        field: "product_image",
-        width: 100,
-      },
-      {
-        label: "Product Title",
-        field: "product_title",
-      },
-      {
-        label: "Product Price",
-        field: "product_price",
-      },
-      {
-        label: "Ordered Quantity",
-        field: "order_quantity",
-      },
-      {
-        label: "Total Amount",
-        field: "total_amount",
+        label: "Order at",
+        field: "ordered_at",
       },
       {
         label: "Customer Name",
         field: "customer_name",
+      },
+      {
+        label: "Total Amount",
+        field: "total_amount",
       },
       {
         label: "Status",
@@ -51,7 +38,7 @@ const Order = () => {
       {
         label: "Actions",
         field: "actions",
-      }
+      },
     ],
     rows: [],
   });
@@ -64,60 +51,102 @@ const Order = () => {
 
   const fetchData = () => {
     setIsLoading(true);
-    axios.get("https://localhost:7248/api/Order") // Adjust this endpoint to your Order API if needed
+    axios
+      .get("https://localhost:7248/api/Order")
       .then((response) => {
         const data = response.data.$values;
-        console.log(data);
         if (!data || data.length === 0) {
           toast.info("No Orders found.");
           setIsLoading(false);
           return;
         }
 
-        const rows = data.map((order) => ({
-          id: `ORD-${new Date().getFullYear()}-${order.id}`,
-          product_image: (
-            <img
-              src={order.product.image}
-              alt={order.product.title}
-              style={{ width: "25px", height: "25px", borderRadius: "50%" }}
-            />
-          ),
-          product_title: order.product.title,
-          product_price: `$${order.product.price}`,
-          order_quantity: order.quantity,
-          total_amount: order.totalPrice,
-          customer_name: order.customer.name,
-          status: order.status,
-          actions: (
-            <MDBDropdown>
-              <MDBDropdownToggle caret style={{ backgroundColor: 'transparent', border: 'none', color: '#000' }} className="btn btn-sm btn-secondary">
-                <i className="fas fa-ellipsis-v"></i>
-              </MDBDropdownToggle>
-              <MDBDropdownMenu>
-                <MDBDropdownItem onClick={() => {
-                  setSelectedOrder(order);
-                  toggleModal();
-                }}>
-                  <i className="fas fa-eye me-2"></i> View Details
-                </MDBDropdownItem>
-                <MDBDropdownItem onClick={() => {
-                  setSelectedOrder(order);
-                  toggleModal();
-                }}>
-                  <i className="fas fa-cart-shopping me-2"></i> Update Order Status
-                </MDBDropdownItem>
-              </MDBDropdownMenu>
-            </MDBDropdown>
-          ),
-        }));
+        let firstCustomerName = "";
+
+        const rows = data.map((order, index) => {
+          if (index === 0) {
+            firstCustomerName = order.customer.name;
+          }
+
+          const formattedAmount = new Intl.NumberFormat("en-LK", {
+            style: "currency",
+            currency: "LKR",
+            minimumFractionDigits: 2,
+          }).format(order.totalPrice);
+
+          return {
+            id:  `ORD-${new Date().getFullYear()}-${order.id}`,
+            ordered_at: new Date(order.createAt).toLocaleString(),
+            customer_name: index === 0 ? firstCustomerName : firstCustomerName,
+            total_amount: formattedAmount,
+            status:
+              order.status === "Pending" ? (
+                <span className="badge badge-warning">{order.status}</span>
+              ) : order.status === "Delivered" ? (
+                <span className="badge badge-success">{order.status}</span>
+              ) : (
+                <span className="badge badge-danger">{order.status}</span>
+              ),
+            actions: (
+              <MDBDropdown>
+                <MDBDropdownToggle
+                  caret
+                  style={{
+                    backgroundColor: "transparent",
+                    border: "none",
+                    color: "#000",
+                  }}
+                  className="btn btn-sm btn-secondary"
+                >
+                  <i className="fas fa-ellipsis-v"></i>
+                </MDBDropdownToggle>
+                <MDBDropdownMenu>
+                  <MDBDropdownItem
+                    onClick={() => {
+                      setSelectedOrder(order); // Make sure you are passing the entire order object
+                      toggleModal();
+                    }}
+                  >
+                    <i className="fas fa-eye me-2"></i> View Details
+                  </MDBDropdownItem>
+                  {order.status === "Cancelled" ||
+                  order.status === "Delivered" ? (
+                    ""
+                  ) : (
+                    <>
+                      <MDBDropdownItem
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          toggleModal();
+                        }}
+                      >
+                        <i className="fas fa-check me-2"></i> Approve Order
+                      </MDBDropdownItem>
+                      <MDBDropdownItem
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          toggleModal();
+                        }}
+                      >
+                        <i className="fas fa-times me-2"></i> Decline Order
+                      </MDBDropdownItem>
+                    </>
+                  )}
+                </MDBDropdownMenu>
+              </MDBDropdown>
+            ),
+          };
+        });
 
         setDatatable((prevState) => ({ ...prevState, rows: rows }));
         setIsLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching data:", err);
-        toast.error(err.response?.data?.message || "Failed to load orders. Please try again later.");
+        toast.error(
+          err.response?.data?.message ||
+            "Failed to load orders. Please try again later."
+        );
         setIsLoading(false);
       });
   };
@@ -161,24 +190,64 @@ const Order = () => {
         <MDBModalBody>
           {selectedOrder && (
             <div>
-              <p style={{ fontSize: '24px' }}>
-                <strong>Order ID:</strong> {`ORD-${new Date().getFullYear()}-${selectedOrder.id}`},
+              <p style={{ fontSize: "24px" }}>
+                <strong>Order ID:</strong>{" "}
+                {`ORD-${new Date().getFullYear()}-${selectedOrder.id}`}
               </p>
-              <p><strong>Product Title:</strong> {selectedOrder.product.title}</p>
-              <p><strong>Ordered Quantity:</strong> {selectedOrder.quantity}</p>
-              <p><strong>Total Amount: $</strong> {selectedOrder.totalPrice}</p>
-              <p><strong>Customer Name:</strong> {selectedOrder.customer.name}</p>
-              <p><strong>Customer Address:</strong> {selectedOrder.customer.address}</p>
-              <p><strong>Customer Mobile:</strong> {selectedOrder.customer.mobileNumber}</p>
-              <p><strong>Status:</strong> <span className={`badge badge-${selectedOrder.status === "Pending" ? "danger" : "success"}`}>
-                {selectedOrder.status}
-              </span></p>
-              <p><strong>Created At:</strong> {new Date(selectedOrder.createAt).toLocaleString()}</p>
+              {/* Displaying the order details */}
+              <p>
+                <strong>Customer Name:</strong> {selectedOrder.customer.name}
+              </p>
+              <p>
+                <strong>Customer Address:</strong>{" "}
+                {selectedOrder.customer.address}
+              </p>
+              <p>
+                <strong>Customer Mobile:</strong>{" "}
+                {selectedOrder.customer.mobileNumber}
+              </p>
+              <p>
+                <strong>Ordered Items:</strong>
+              </p>
+              <ul>
+                {selectedOrder.orderItems.$values?.map((item, index) => (
+                  <li key={index}>
+                    <strong>Product:</strong> {item.book.title} -{" "}
+                    <strong>Quantity:</strong> {item.quantity
+                    }
+                  </li>
+                ))}
+              </ul>
+              <p>
+                <strong>Total Amount:</strong>{" "}
+                {new Intl.NumberFormat("en-LK", {
+                  style: "currency",
+                  currency: "LKR",
+                }).format(selectedOrder.totalPrice)}
+              </p>
+              <p>
+                <strong>Status:</strong>
+                {
+                  selectedOrder.status === "Pending" ? (
+                    <span className="badge badge-warning">{selectedOrder.status}</span>
+                  ) : selectedOrder.status === "Delivered" ? (
+                    <span className="badge badge-success">{selectedOrder.status}</span>
+                  ) : (
+                    <span className="badge badge-danger">{selectedOrder.status}</span>
+                  )
+                }
+              </p>
+              <p>
+                <strong>Created At:</strong>{" "}
+                {new Date(selectedOrder.createAt).toLocaleString()}
+              </p>
             </div>
           )}
         </MDBModalBody>
         <MDBModalFooter>
-          <MDBBtn color="secondary" onClick={toggleModal}>Close</MDBBtn>
+          <MDBBtn color="secondary" onClick={toggleModal}>
+            Close
+          </MDBBtn>
         </MDBModalFooter>
       </MDBModal>
     </>

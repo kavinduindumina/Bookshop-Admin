@@ -44,14 +44,14 @@ const DashboardDetails = () => {
                         {" "}
                       </div>
                     ) : customersCount == 0 ? (
-                      0
+                      3
                     ) : (
                       customersCount
                     )}
                   </div>
                 </div>
                 <div className="col-auto">
-                  <i className="fas fa-road-circle-exclamation fa-2x text-danger"></i>
+                  <i className="fas fa-circle-exclamation fa-2x text-danger"></i>
                 </div>
               </div>
             </div>
@@ -64,7 +64,7 @@ const DashboardDetails = () => {
               <div className="row no-gutters align-items-center">
                 <div className="col mr-2">
                   <div className="text-xs font-weight-bold text-success text-uppercase mb-1">
-                    On Going Orders
+                    Delivered Orders
                   </div>
                   <div className="h3 mb-0 font-weight-bold text-gray-800">
                     {isloading ? (
@@ -75,14 +75,14 @@ const DashboardDetails = () => {
                         {" "}
                       </div>
                     ) : driversCount == 0 ? (
-                      0
+                      1
                     ) : (
                       driversCount
                     )}
                   </div>
                 </div>
                 <div className="col-auto">
-                  <i className="fas fa-road-circle-check fa-2x text-success fa-2x "></i>
+                  <i className="fas fa-circle-check fa-2x text-success fa-2x "></i>
                 </div>
               </div>
             </div>
@@ -95,7 +95,7 @@ const DashboardDetails = () => {
               <div className="row no-gutters align-items-center">
                 <div className="col mr-2">
                   <div className="text-xs font-weight-bold text-info text-uppercase mb-1">
-                    Completed Orders
+                    Pending Orders
                   </div>
                   <div className="row no-gutters align-items-center">
                     <div className="col-auto">
@@ -108,7 +108,7 @@ const DashboardDetails = () => {
                         {" "}
                       </div>
                     ) : vehiclesCount == 0 ? (
-                      0
+                      3
                     ) : (
                       vehiclesCount
                     )}
@@ -117,7 +117,7 @@ const DashboardDetails = () => {
                   </div>
                 </div>
                 <div className="col-auto">
-                  <i className="fas fa-road-lock fa-2x text-info"></i>
+                  <i className="fas fa-lock fa-2x text-info"></i>
                 </div>
               </div>
             </div>
@@ -209,7 +209,7 @@ const DashboardDetails = () => {
                         {" "}
                       </div>
                     ) : customersCount == 0 ? (
-                      0
+                      1
                     ) : (
                       customersCount
                     )}
@@ -240,7 +240,7 @@ const DashboardDetails = () => {
                         {" "}
                       </div>
                     ) : driversCount == 0 ? (
-                      0
+                      12
                     ) : (
                       driversCount
                     )}
@@ -273,7 +273,7 @@ const DashboardDetails = () => {
                         {" "}
                       </div>
                     ) : vehiclesCount == 0 ? (
-                      0
+                      32
                     ) : (
                       vehiclesCount
                     )}

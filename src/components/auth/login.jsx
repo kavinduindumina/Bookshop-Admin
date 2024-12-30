@@ -51,15 +51,10 @@ const Login = () => {
                   <div>
                     <div className="p-5">
                       <div className="text-center">
-                        <img
-                          src="logo.png"
-                          alt=""
-                          width={150}
-                          style={{ marginBottom: "20px" }}
-                        />
-                        <h1 className="h3 text-gray-900 fw-bold">
+                        <h1 className="text-primary fw-bold mb-3">Bookverse</h1>
+                        <h4 className="text-gray-900">
                           Welcome to the Admin Portal
-                        </h1>
+                        </h4>
                         <p className="fs-6 mb-4 text-secondary">
                           Please Login to your account
                         </p>

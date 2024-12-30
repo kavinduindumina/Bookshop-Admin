@@ -30,7 +30,7 @@ const AddCustomer = () => {
       axios
         .get(`https://localhost:7248/api/Customer/${id}`)
         .then((response) => {
-          const data = response.data.$values[0];
+          const data = response.data;
           setEmail(data.email);
           setFullName(data.name);
           setPhoneNumber(data.mobileNumber);
@@ -264,7 +264,7 @@ const AddCustomer = () => {
                     type="text"
                     id="form6Example7"
                     className="form-control"
-                    value={favoriteGenres.join(", ")}
+                    value=""
                     onChange={(e) =>
                       setFavoriteGenres(e.target.value.split(",").map((genre) => genre.trim()))
                     }
