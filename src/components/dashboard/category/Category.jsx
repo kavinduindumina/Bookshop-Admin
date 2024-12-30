@@ -22,8 +22,7 @@ const Category = () => {
       { label: "ID", field: "id" },
       { label: "Category Name", field: "categoryName" },
       { label: "Description", field: "description" },
-      //{ label: "Category Status", field: "categoryStatus" },
-      { label: "Category Created At", field: "categoryCreatedAt" },
+      { label: "Created At", field: "categoryCreatedAt" },
       { label: "Actions", field: "actions", sort: "disabled", width: 100 },
     ],
     rows: [],
@@ -45,15 +44,6 @@ const Category = () => {
           id: row.id,
           categoryName: row.name,
           description: row.description,
-          // categoryStatus: (
-          //   <span
-          //     className={`badge badge-${
-          //       row.status === "approved" ? "success" : "danger"
-          //     }`}
-          //   >
-          //     {row.status}
-          //   </span>
-          // ),
           categoryCreatedAt: new Date(row.createAt).toLocaleString(),
           actions: (
             <MDBDropdown>
@@ -69,9 +59,6 @@ const Category = () => {
               <MDBDropdownMenu basic>
                 <MDBDropdownItem>
                   <i className="fas fa-edit"></i> Edit
-                </MDBDropdownItem>
-                <MDBDropdownItem onClick={() => handleViewClick(row.id)}>
-                  <i className="fas fa-eye"></i> View
                 </MDBDropdownItem>
                 <MDBDropdownItem
                   onClick={() => handleDeleteClick(row.id)}
@@ -108,10 +95,11 @@ const Category = () => {
       .post(`https://localhost:7248/api/Category/${rowId}`)
       .then((response) => {
         setSelectedCategory(response.data.message);
-        setModal(true); // Open modal
+        setModal(true);
       })
       .catch((err) => {
         toast.error("Error fetching category details ", err.response.data.message);
+        console.log(err)
       });
   };
 

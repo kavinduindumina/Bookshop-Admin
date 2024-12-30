@@ -8,14 +8,6 @@ import "jspdf-autotable";
 const Reports = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [PassengertoDate, setPassegngerToDate] = useState("");
-  const [PassengerfromDate, setPassengerFromDate] = useState("");
-  const [DriverfromDate, setDriverFromDate] = useState("");
-  const [DrivertoDate, setDriverToDate] = useState("");
-  const [VehiclefromDate, setVehicleFromDate] = useState("");
-  const [VehicletoDate, setVehicleToDate] = useState("");
-  const [RevenuefromDate, setRevenueFromDate] = useState("");
-  const [RevenuetoDate, setRevenueToDate] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleGenerateReport = (reportType) => {
@@ -25,12 +17,12 @@ const Reports = () => {
     console.log(`Generating ${reportType} report from ${fromDate} to ${toDate}`);
   };
 
-  const handleGeneratePassengerReport = (reportType) => {
-    if(!PassengerfromDate || !PassengertoDate){
+  const handleGenerate = (reportType) => {
+    if(!fromDate || !toDate){
         return toast.error("Please select from and to date");
     }
 
-    axios.get(`http://localhost:3000/api/v1/reports/total-passengers?fromDate=${PassengerfromDate}&toDate=${PassengertoDate}`)
+    axios.get(`https://localhost:7248/api/Report/stock-levels?fromDate=${fromDate}&toDate=${toDate}`)
     .then((res) => {
       if(res.data.message.length === 0){
         return toast.error("No data found for the selected date range");
@@ -40,7 +32,7 @@ const Reports = () => {
     .catch((err) => {
         toast.error(err.response.data.message);
     });
-    console.log(`Generating ${reportType} report from ${PassengerfromDate} to ${PassengertoDate}`);
+    console.log(`Generating ${reportType} report from ${fromDate} to ${toDate}`);
   }
 
   const generatePDF = (data) => {
@@ -52,7 +44,7 @@ const Reports = () => {
     doc.addImage(img, "PNG", pageWidth / 2 - 15, 10, 30, 30); 
   
     doc.setFontSize(18);
-    const title = "City Taxi Passengers Report";
+    const title = "Bookverse Stock Report";
     const titleWidth = doc.getTextWidth(title);
     doc.text(title, (pageWidth - titleWidth) / 2, 50);
   
@@ -61,7 +53,7 @@ const Reports = () => {
     const reportDateWidth = doc.getTextWidth(reportDateText);
     doc.text(reportDateText, (pageWidth - reportDateWidth) / 2, 60);
   
-    const dateRangeText = `From: ${PassengerfromDate} To: ${PassengertoDate}`;
+    const dateRangeText = `From: ${fromDate} To: ${toDate}`;
     const dateRangeWidth = doc.getTextWidth(dateRangeText);
     doc.text(dateRangeText, (pageWidth - dateRangeWidth) / 2, 70);
   
@@ -108,12 +100,10 @@ const Reports = () => {
     const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1)
       .toString()
       .padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
-    doc.save(`passenger_report_${formattedDate}.pdf`);
+    doc.save(`Stock_Report_${formattedDate}.pdf`);
     setIsDownloading(false);
   };
   
-
-
   return (
     <div className="card shadow" style={{ marginBottom: "150px" }}>
       <div className="card-header py-3 d-sm-flex align-items-center justify-content-between">
@@ -156,34 +146,34 @@ const Reports = () => {
                 <td>
                   <button
                     className="btn btn-primary"
-                    onClick={() => /*handleGenerateReport("Total Rides"),*/ toast.success("Genarating Report")}
+                    onClick={() => handleGenerateReport("Total Rides")}
                   >
                     Generate Report
                   </button>
                 </td>
               </tr>
               <tr>
-                <td>Profit Report</td>
+                <td>Sales Report</td>
                 <td>
                   <input
                     type="date"
-                    value={PassengerfromDate}
-                    onChange={(e) => setPassengerFromDate(e.target.value)}
+                    value={fromDate}
+                    onChange={(e) => setFromDate(e.target.value)}
                     className="form-control"
                   />
                 </td>
                 <td>
                   <input
                     type="date"
-                    value={PassengertoDate}
-                    onChange={(e) => setPassegngerToDate(e.target.value)}
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
                     className="form-control"
                   />
                 </td>
                 <td>
                   <button
                     className="btn btn-primary"
-                    onClick={() => handleGeneratePassengerReport("Ride Status")}
+                    onClick={() => handleGenerate("Ride Status")}
                     disabled={isDownloading}
                   >
                    {
@@ -192,36 +182,6 @@ const Reports = () => {
                   </button>
                 </td>
               </tr>
-              <tr>
-                <td>Expences Report</td>
-                <td>
-                  <input
-                    type="date"
-                    value={fromDate}
-                    onChange={(e) => setDriverFromDate(e.target.value)}
-                    className="form-control"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="date"
-                    value={toDate}
-                    onChange={(e) => setDriverToDate(e.target.value)}
-                    className="form-control"
-                  />
-                </td>
-                <td>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => handleGenerateReport("Rides by Driver")}
-                  >
-                    Generate Report
-                  </button>
-                </td>
-              </tr>
-              
-             
-              
             </tbody>
           </table>
         </div>

@@ -67,7 +67,7 @@ const Book = () => {
     setIsloading(true);
     axios.get("https://localhost:7248/api/Book")
       .then((response) => {
-        const data = response.data.message;
+        const data = response.data;
         const rows = data.map((row) => {
           return {
             id: row.id,
@@ -76,7 +76,7 @@ const Book = () => {
             category: row.category.name,
             author: row.author.name,
             language: row.language,
-            price: `$${row.price}`, // Assuming price is a number
+            price: `LKR ${row.price}`, // Assuming price is a number
             qty: row.qty,
             createdAt: new Date(row.createAt).toLocaleString(),
             actions: (
@@ -113,50 +113,7 @@ const Book = () => {
                   }}>
                     <i className="fas fa-trash"></i> Delete
                   </MDBDropdownItem>
-                  <MDBDropdownItem onClick={() => {
-                    row.status === "active" ? 
-                    Swal.fire({
-                      title: "Are you sure?",
-                      text: "Are you sure you want to block this book?",
-                      icon: "warning",
-                      showCancelButton: true,
-                      confirmButtonText: "Yes, block it!",
-                      cancelButtonText: "No, cancel!",
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        axios.put(`http://localhost:3000/api/v1/book/update-status/${row.id}`, { status: "blocked" })
-                          .then(() => {
-                            toast.success("Book blocked successfully");
-                            window.location.reload();
-                          })
-                          .catch((err) => {
-                            toast.error(err.response.data.message);
-                          });
-                      }
-                    }) : 
-                    Swal.fire({
-                      title: "Are you sure?",
-                      text: "Are you sure you want to unblock this book?",
-                      icon: "warning",
-                      showCancelButton: true,
-                      confirmButtonText: "Yes, unblock!",
-                      cancelButtonText: "No, cancel!",
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        axios.put(`http://localhost:3000/api/v1/book/update-status/${row.id}`, { status: "active" })
-                          .then(() => {
-                            toast.success("Book unblocked successfully");
-                            window.location.reload();
-                          })
-                          .catch((err) => {
-                            toast.error(err.response.data.message);
-                          });
-                      }
-                    });
-                  }}>
-                    <i className={row.status === "active" ? "fas fa-eye-slash" : "fas fa-eye"}></i>
-                    {row.status === "active" ? " Block" : " Unblock"}
-                  </MDBDropdownItem>
+                 
                 </MDBDropdownMenu>
               </MDBDropdown>
             ), 

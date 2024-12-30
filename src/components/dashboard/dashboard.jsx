@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import DateTime from "./DateAndTime";
 
-const Dashboard = () => {  
+const Dashboard = () => {
   const navigate = useNavigate();
   const [driversCount, setDriverCount] = useState(0);
   const [customersCount, setCustomerCount] = useState(0);
@@ -23,7 +23,6 @@ const Dashboard = () => {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        
         localStorage.clear();
         navigate("/");
       }
@@ -43,9 +42,7 @@ const Dashboard = () => {
             className="sidebar-brand d-flex align-items-center justify-content-center"
             href="#"
           >
-            <div className="sidebar-brand-text mx-3">
-              Book Shop Admin
-            </div>
+            <div className="sidebar-brand-text mx-3">Book Shop Admin</div>
           </a>
 
           {/* <!-- Divider --> */}
@@ -122,7 +119,7 @@ const Dashboard = () => {
               </div>
             </div>
           </li>
-        
+
           <li className="nav-item">
             <a
               className="nav-link collapsed"
@@ -243,7 +240,7 @@ const Dashboard = () => {
             </div>
           </li>
 
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a
               className="nav-link collapsed"
               href="#"
@@ -268,7 +265,7 @@ const Dashboard = () => {
                 </Link>
               </div>
             </div>
-          </li>
+          </li> */}
         </ul>
         {/* <!-- End of Sidebar --> */}
 
@@ -306,9 +303,12 @@ const Dashboard = () => {
                     aria-expanded="false"
                   >
                     <span className="mr-2 d-none d-lg-inline text-gray-600 small fw-bold">
-                      Kavindu
+                      Administrator
                     </span>
-                    <img className="img-profile rounded-circle" src="" />
+                    <img
+                      className="img-profile rounded-circle"
+                      src="https://th.bing.com/th/id/OIP.48pFB2Y98xKSOhhzr2_stAHaHa?rs=1&pid=ImgDetMain"
+                    />
                   </a>
                   {/* <!-- Dropdown - User Information --> */}
                   <div

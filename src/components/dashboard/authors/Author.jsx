@@ -61,7 +61,8 @@ const Author = () => {
               {row.status}
             </span>
           ),
-          authorCreatedAt: new Date(row.createdAt).toLocaleString(),
+          authorCreatedAt: new Date(row.createAt
+          ).toLocaleString(),
           actions: (
             <MDBDropdown>
               <MDBDropdownToggle caret style={{ backgroundColor: 'transparent', border: 'none', color: '#000' }} className="btn btn-sm btn-secondary">
@@ -89,7 +90,7 @@ const Author = () => {
         console.log(error);
         toast.error(error.message);
       });
-  }, [datatable]);
+  }, []);
 
   // Handle view button click
   const handleViewClick = (author) => {

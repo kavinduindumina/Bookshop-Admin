@@ -21,8 +21,6 @@ const Customer = () => {
       { label: "Email", field: "email", width: 100 },
       { label: "Phone", field: "phone", width: 100 },
       { label: "Address", field: "address", width: 50 },
-      { label: "Reading Goals", field: "readingGoals", width: 100 },
-      { label: "Favorite Genres", field: "favoriteGenres", width: 100 },
       { label: "Created At", field: "createdAt" },
       { label: "Actions", field: "actions", sort: "disabled", width: 200 },
     ],
@@ -34,12 +32,12 @@ const Customer = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   // Function to handle showing modal and fetching customer details
-  const handleShowModal = (customerId) => {
+  const handleShowModal = async (customerId) => {
     setIsloading(true);
-    axios
+    await axios
       .get(`https://localhost:7248/api/Customer/${customerId}`)
       .then((response) => {
-        const customer = response.data.$values[0];  // Extracting the customer from the response
+        const customer = response.data;  // Extracting the customer from the response
         setSelectedCustomer(customer); // Set the fetched customer details
         setShowModal(true); // Show the modal
         setIsloading(false);
@@ -47,8 +45,10 @@ const Customer = () => {
       .catch((error) => {
         toast.error("Error fetching Customer details");
         setIsloading(false);
+        console.log(error)
       });
   };
+
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -100,8 +100,6 @@ const Customer = () => {
             email: row.email,
             phone: row.mobileNumber,
             address: row.address,
-            readingGoals: row.readingGoals,
-            favoriteGenres: row.favoriteGenres.$values.join(", "),  // Assuming favorite genres is an array
             createdAt: new Date(row.createAt).toLocaleString(),
             actions: (
               <MDBDropdown>
